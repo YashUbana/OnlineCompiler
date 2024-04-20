@@ -1,14 +1,23 @@
-import { Button } from "./components/ui/button";
-import { ResizablePanel } from "./components/ui/resizable";
+import { Route, Routes } from "react-router-dom";
+import Header from "./components/Header";
+import Home from "./pages/Home";
+import Compiler from "./pages/Compiler";
+import NotFoundPage from "./pages/NotFoundPage";
+import { ThemeProvider } from "@/components/theme-provider";
 
 function App() {
-
   return (
     <>
-     
-      <Button variant="destructive">This is button</Button>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/compiler" element={<Compiler />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </ThemeProvider>
     </>
   );
 }
 
-export default App
+export default App;
