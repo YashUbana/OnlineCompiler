@@ -1,5 +1,6 @@
 import CodeEditor from "@/components/CodeEditor";
 import HelperHeader from "@/components/HelperHeader";
+import RenderCode from "@/components/RenderCode";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -16,7 +17,7 @@ export default function Compile() {
       </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel className="h-[calc(100dvh-60px)]" defaultSize={50}>
-        Rigth side
+        <RenderCode/>
       </ResizablePanel>
     </ResizablePanelGroup>
   );
