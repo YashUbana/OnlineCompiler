@@ -1,0 +1,19 @@
+.animated-text {
+    font-size: 3em;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(255, 100, 255, 5);
+    animation: rainbow 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes rainbow {
+    50% {
+      color: white;
+    }
+    50%{
+      color: blueviolet;
+    }
+    
+  }
+
+  
+  
