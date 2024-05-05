@@ -24,7 +24,30 @@ export const signup = async (req: Request, res: Response) => {
       password: hashedPassword,
       username: username,
     });
-    return res.status(201).send({ user });
+
+    const jwtToken = jwt.sign(
+      {
+        _id: user._id,
+        email: user.email,
+      },
+      process.env.JWT_KEY!,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    res.cookie("token", jwtToken, {
+      path: "/",
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      httpOnly: true,
+      sameSite: "lax",
+    });
+    return res.status(201).send({ 
+      username: user.username,
+      picture: user.picture,
+      email: user.email,
+      savedCodes: user.savedCode,
+     });
   } catch (error) {
     return res.status(500).send({ message: "Error signing up!", error: error });
   }
@@ -96,7 +119,7 @@ export const userDetails = async (req: AuthRequest, res: Response) => {
   try {
     const user = await User.findById(userId)
     if(!user){
-      return res.status(404).send({message: "Cannot find the user!"})
+      return res.status(404).send({message: "Cannot find the user"})
     }
     return res.status(200).send({ 
       username: user.username,
