@@ -6,6 +6,7 @@ import { handleError } from "@/utils/handleError";
 import { useLogoutMutation } from "@/redux/slices/api";
 import { updateCurrentUser, updateIsLoggedIn } from "@/redux/slices/appSlice";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { updateIsOwner } from "@/redux/slices/compilerSlice";
 
 export default function Header() {
   const [logout, { isLoading }] = useLogoutMutation();
@@ -21,6 +22,7 @@ export default function Header() {
       await logout().unwrap();
       dispatch(updateIsLoggedIn(false));
       dispatch(updateCurrentUser({}));
+      dispatch(updateIsOwner(false));
     } catch (error) {
       handleError(error);
     }
@@ -28,7 +30,7 @@ export default function Header() {
   return (
     <nav className="w-full h-[60px] bg-gray-900 text-white p-3 flex justify-between items-center">
       <Link to="/">
-        <h2 className="font-bold">Online Complier</h2>
+        <h2 className="font-semibold">Code-Mela</h2>
       </Link>
 
       <ul className="flex gap-2">
@@ -37,8 +39,22 @@ export default function Header() {
             <Button variant="outline">Compiler</Button>
           </Link>
         </li>
+        <li>
+              <Link to="/all-codes">
+                <Button variant="blue">
+                  All Codes
+                </Button>
+              </Link>
+            </li>
         {isLoggedIn ? (
           <>
+            <li>
+              <Link to="/my-codes">
+                <Button variant="success">
+                  My Codes
+                </Button>
+              </Link>
+            </li>
             <li>
               <Button
                 loading={isLoading}
@@ -51,7 +67,9 @@ export default function Header() {
             <li>
               <Avatar>
                 <AvatarImage src={currentUser.picture} />
-                <AvatarFallback className="capatalize">{currentUser.username?.slice(0,2)}</AvatarFallback>
+                <AvatarFallback className="capatalize">
+                  {currentUser.username?.slice(0, 2)}
+                </AvatarFallback>
               </Avatar>
             </li>
           </>

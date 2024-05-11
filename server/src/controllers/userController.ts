@@ -69,7 +69,7 @@ export const login = async (req: Request, res: Response) => {
 
     const passwordMatched = await bcrypt.compare(
       password,
-      existingUser.password
+      existingUser.password,
     );
 
     if (!passwordMatched) {

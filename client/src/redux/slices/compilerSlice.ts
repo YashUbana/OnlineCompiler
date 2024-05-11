@@ -8,6 +8,7 @@ export interface CompilerSliceStateType {
   };
 
   currentLanguage: "html" | "css" | "javascript";
+  isOwner: boolean
 }
 
 const initialState: CompilerSliceStateType = {
@@ -120,6 +121,7 @@ const initialState: CompilerSliceStateType = {
     `,
   },
   currentLanguage: "html",
+  isOwner: false,
 };
 const compilerSlice = createSlice({
   name: "compilerSlice",
@@ -134,6 +136,9 @@ const compilerSlice = createSlice({
     updateCodeValue: (state, action: PayloadAction<string>) => {
       state.fullCode[state.currentLanguage] = action.payload;
     },
+    updateIsOwner:(state, action: PayloadAction<boolean>)=>{
+      state.isOwner = action.payload
+    },
     updateFullCode: (
       state,
       action: PayloadAction<CompilerSliceStateType["fullCode"]>
@@ -144,5 +149,5 @@ const compilerSlice = createSlice({
 });
 
 export default compilerSlice.reducer;
-export const { updateCurrentLanguage, updateCodeValue, updateFullCode } =
+export const { updateCurrentLanguage, updateCodeValue, updateFullCode,updateIsOwner } =
   compilerSlice.actions;
