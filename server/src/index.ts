@@ -8,16 +8,16 @@ import cookieParser from "cookie-parser";
 const app = express();
 
 app.use(express.json());
-app.use(cors({credentials:true, origin:"http://localhost:5173"}));
-app.use(cookieParser())
+app.use(cors({ credentials: true, origin: "https://online-compiler-oqtkkzhi6-yashubanas-projects.vercel.app" }));
+app.use(cookieParser());
 config();
 
-app.use("/compiler",compilerRouter)
-app.use("/user", userRouter)
+app.use("/compiler", compilerRouter);
+app.use("/user", userRouter);
 
-app.get('/', (req, res) => {
-    res.send('Hello, World!');
-  });
+app.get("/", (req, res) => {
+  res.send("Hello, World!");
+});
 
 dbConnect();
 app.listen(4000, () => {
