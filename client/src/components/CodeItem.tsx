@@ -13,7 +13,13 @@ import {
 } from "./ui/dialog";
 import { useDeleteCodeMutation } from "@/redux/slices/api";
 
-export default function CodeItem({ data }: { data: codeType }) {
+export default function CodeItem({
+  data,
+  deleteBtn,
+}: {
+  data: codeType;
+  deleteBtn: boolean;
+}) {
   const [deleteCode, { isLoading }] = useDeleteCodeMutation();
   const handleDelete = async () => {
     const reponse = await deleteCode(data._id!).unwrap();
@@ -35,37 +41,38 @@ export default function CodeItem({ data }: { data: codeType }) {
         <Link target="_blank" to={`/compiler/${data._id}`}>
           <Button variant="outline">Open Code</Button>
         </Link>
+        {deleteBtn && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                // onClick={handleSaveCode}
+                variant="destructive"
+                disabled={false}
+              >
+                Delete
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="flex gap-1 justify-center items-center">
+                  <Trash2 /> Confire? You want to DELETE.
+                </DialogTitle>
 
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              // onClick={handleSaveCode}
-              variant="destructive"
-              disabled={false}
-            >
-              Delete
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle className="flex gap-1 justify-center items-center">
-                <Trash2 /> Confire? You want to DELETE.
-              </DialogTitle>
-
-              <div className="__url flex gap-1 justify-center items-center">
-                <Button
-                  loading={isLoading}
-                  variant="destructive"
-                  className="h-full"
-                  onClick={handleDelete}
-                  color="blue"
-                >
-                  YES DELETE
-                </Button>
-              </div>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+                <div className="__url flex gap-1 justify-center items-center">
+                  <Button
+                    loading={isLoading}
+                    variant="destructive"
+                    className="h-full"
+                    onClick={handleDelete}
+                    color="blue"
+                  >
+                    YES DELETE
+                  </Button>
+                </div>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </div>
   );

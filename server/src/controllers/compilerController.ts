@@ -46,19 +46,17 @@ export const saveCode = async (req: AuthRequest, res: Response) => {
 };
 export const loadCode = async (req: AuthRequest, res: Response) => {
   const { urlId } = req.body;
-  let isOwner = false
-  const userId = req._id
+  let isOwner = false;
+  const userId = req._id;
   try {
     const existingCode = await Code.findById(urlId);
     if (!existingCode) {
       return res.status(404).send({ message: "Code Not Found" });
     }
-    const user = await User.findById(userId)
-  
-    
-    
-    if(user?.username === existingCode.owerName){
-      isOwner = true
+    const user = await User.findById(userId);
+
+    if (user?.username === existingCode.owerName) {
+      isOwner = true;
     }
     return res.status(200).send({ fullCode: existingCode.fullCode, isOwner });
   } catch (error) {
@@ -106,16 +104,45 @@ export const deleteCode = async (req: AuthRequest, res: Response) => {
     } else {
       return res.status(200).send({ message: "Code Not found" });
     }
-
-    return res.status(200).send({ id });
   } catch (error) {
     return res.status(500).send({ message: "Error deleting code", error });
   }
 };
 
 export const editCode = async (req: AuthRequest, res: Response) => {
+  const userId = req._id;
+  const postId = req.params.id;
+  const fullCode = req.body;
   try {
+    const owner = await User.findById(userId);
+    if (!owner) {
+      return res.status(404).send({ message: "cannot find owner" });
+    }
+    const existingPost = await Code.findById(postId);
+    if (!existingPost) {
+      return res.status(404).send({ message: "Cannot find post to edit" });
+    }
+    if (existingPost.owerName !== owner.username) {
+      return res
+        .status(400)
+        .send({ message: "You dont have permission to edit this post" });
+    }
+    await Code.findByIdAndUpdate(postId, {
+      fullCode: fullCode,
+    });
+ 
+    return res.status(200).send({ message: "Post Updated successfully" });
   } catch (error) {
     return res.status(500).send({ message: "Error Editing code", error });
   }
 };
+
+export const getAllCodes = async (req: Request, res: Response) => {
+  try {
+    const allCodes = await Code.find().sort({createdAt: -1})
+    return res.status(200).send( allCodes );
+    
+  } catch (error) {
+    return res.status(500).send({ message: "Error Editing code", error });
+  }
+}

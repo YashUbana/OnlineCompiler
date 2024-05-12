@@ -7,7 +7,7 @@ export default function MyCodes() {
   return myCodes?.length !== 0 ? (
     <div className="border-2 p-3 grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-3">
       {myCodes?.map((item) => {
-        return <CodeItem key={item._id} data={item} />;
+        return <CodeItem deleteBtn={true} key={item._id} data={item} />;
       })}
     </div>
   ) : (

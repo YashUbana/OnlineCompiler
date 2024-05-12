@@ -12,7 +12,7 @@ export const api = createApi({
     baseUrl: "http://localhost:4000",
     credentials: "include",
   }),
-  tagTypes: ["myCodes"],
+  tagTypes: ["myCodes", "allCodes"],
   endpoints: (builder) => ({
     saveCode: builder.mutation<{ url: string; status: string }, codeType>({
       query: (fullCode) => (
@@ -23,11 +23,11 @@ export const api = createApi({
           body: fullCode,
         }
       ),
-      invalidatesTags: ["myCodes"],
+      invalidatesTags: ["myCodes", "allCodes"],
     }),
 
     loadCode: builder.mutation<
-      { fullCode: CompilerSliceStateType["fullCode"], isOwner: boolean },
+      { fullCode: CompilerSliceStateType["fullCode"]; isOwner: boolean },
       { urlId: string }
     >({
       query: (body) => ({
@@ -67,12 +67,28 @@ export const api = createApi({
       providesTags: ["myCodes"],
     }),
     deleteCode: builder.mutation<void, string>({
-      query: (_id ) => ({
+      query: (_id) => ({
         url: `/compiler/delete/${_id}`,
         method: "DELETE",
-
       }),
-      invalidatesTags: ["myCodes"]
+      invalidatesTags: ["myCodes", "allCodes"],
+    }),
+    editCode: builder.mutation<
+      void,
+      { fullCode: CompilerSliceStateType["fullCode"]; id: string }
+    >({
+      query: ({ fullCode, id }) => ({
+        url: `/compiler/edit/${id}`,
+        method: "PUT",
+        body: fullCode,
+      }),
+    }),
+    getAllCodes: builder.query<Array<{_id:string,title:string,ownerName:string}>, void>({
+      query: () => ({
+        url:"/compiler/get-all-codes",
+        cache:"no-store",
+      }),
+      providesTags:["allCodes"]
     }),
   }),
 });
@@ -85,5 +101,7 @@ export const {
   useGetUserDetailsQuery,
   useSignupMutation,
   useGetMyCodesQuery,
-  useDeleteCodeMutation
+  useDeleteCodeMutation,
+  useEditCodeMutation,
+  useGetAllCodesQuery
 } = api;

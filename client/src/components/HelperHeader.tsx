@@ -32,7 +32,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { useSaveCodeMutation } from "@/redux/slices/api";
+import { useEditCodeMutation, useSaveCodeMutation } from "@/redux/slices/api";
 import { Input } from "./ui/input";
 
 export default function HelperHeader() {
@@ -46,6 +46,7 @@ export default function HelperHeader() {
     (state: RootState) => state.compilerSlice.fullCode
   );
   const [saveCode, { isLoading }] = useSaveCodeMutation();
+  const [editCode, { isLoading: codeEditLoading }] = useEditCodeMutation();
 
   const handleDownloadCode = () => {
     if (
@@ -116,6 +117,10 @@ export default function HelperHeader() {
 
   const handleEditCode = async () => {
     try {
+      if (urlId) {
+        await editCode({ fullCode, id: urlId! }).unwrap();
+        toast("Code Updated Successfully")
+      }
     } catch (error) {
       handleError(error);
     }
@@ -124,6 +129,7 @@ export default function HelperHeader() {
   const currentLanguage = useSelector(
     (state: RootState) => state.compilerSlice.currentLanguage
   );
+
   return (
     <div className="__helper_header h-[50px] bg-black text-white p-2 flex justify-between items-center ">
       <div className="__btn_container flex gap-1">
@@ -167,54 +173,60 @@ export default function HelperHeader() {
         <Button variant="blue" onClick={handleDownloadCode} size="icon">
           <HardDriveDownload size="20" />
         </Button>
-        {isOwner && (
-          <Button size="icon" onClick={handleEditCode} variant="default">
-            <PencilLine size="16" />
-          </Button>
-        )}
 
         {shareBtn && (
-          <Dialog>
-            <DialogTrigger className="flex h-9 items-center justify-between whitespace-nowrap rounded-md border border-input px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-[90px] bg-gray-800 outline-none focus:ring-0">
-              <>
-                <Share2 size="16px" />
-                Share
-              </>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle className="flex gap-1 justify-center items-center">
-                  <Code /> Share Your Code{" "}
-                </DialogTitle>
-                <DialogDescription className="flex flex-col gap-3">
-                  <div className="__url flex gap-1">
-                    <input
-                      type="text"
-                      disabled
-                      className="w-full px-2 py-2 rounded-xl bg-stone-800 text-slate-400"
-                      value={window.location.href}
-                    />
-                    <Button
-                      variant={"ghost"}
-                      className="gap-1"
-                      onClick={() => {
-                        window.navigator.clipboard.writeText(
-                          window.location.href
-                        );
-                        toast("URL Copied to your Clipboard!!");
-                      }}
-                    >
-                      <ClipboardCopy />
-                      Copy URL
-                    </Button>
-                  </div>
-                  <p className="text-center">
-                    Share this URL to collaborate with your FRIEND!
-                  </p>
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+          <>
+            {isOwner && (
+              <Button
+                loading={codeEditLoading}
+                onClick={handleEditCode}
+                variant="default"
+              >
+                <PencilLine size="16" /> Edit
+              </Button>
+            )}
+            <Dialog>
+              <DialogTrigger className="flex h-9 items-center justify-between whitespace-nowrap rounded-md border border-input px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-[90px] bg-gray-800 outline-none focus:ring-0">
+                <>
+                  <Share2 size="16px" />
+                  Share
+                </>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle className="flex gap-1 justify-center items-center">
+                    <Code /> Share Your Code{" "}
+                  </DialogTitle>
+                  <DialogDescription className="flex flex-col gap-3">
+                    <div className="__url flex gap-1">
+                      <input
+                        type="text"
+                        disabled
+                        className="w-full px-2 py-2 rounded-xl bg-stone-800 text-slate-400"
+                        value={window.location.href}
+                      />
+                      <Button
+                        variant={"ghost"}
+                        className="gap-1"
+                        onClick={() => {
+                          window.navigator.clipboard.writeText(
+                            window.location.href
+                          );
+                          toast("URL Copied to your Clipboard!!");
+                        }}
+                      >
+                        <ClipboardCopy />
+                        Copy URL
+                      </Button>
+                    </div>
+                    <p className="text-center">
+                      Share this URL to collaborate with your FRIEND!
+                    </p>
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </>
         )}
       </div>
 
